@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import './Auth.css'
 
 const Register = () => {
@@ -45,13 +46,28 @@ const Register = () => {
             return
         }
 
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Register Data:', formData)
-            alert('Registration Successful! Please login.')
+        try {
+            // ✅ Connect to backend
+            const response = await axios.post('http://localhost:5000/api/auth/register', {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password
+            })
+
+            console.log('Register Success:', response.data)
+
+            // Show success message
+            alert(`Registration Successful! Welcome ${response.data.user.name}! 🎉\nPlease login to continue.`)
+
+            // Navigate to login page
             navigate('/login')
+
+        } catch (err) {
+            console.error('Register Error:', err)
+            setError(err.response?.data?.message || 'Registration failed. Please try again.')
+        } finally {
             setLoading(false)
-        }, 1500)
+        }
     }
 
     return (

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import './Auth.css'
 
 const Login = () => {
@@ -31,18 +32,32 @@ const Login = () => {
             return
         }
 
-        // Simulate API call (Replace with actual API later)
-        setTimeout(() => {
-            console.log('Login Data:', formData)
-            // Navigate to dashboard after successful login
-            // navigate('/dashboard')
-            alert('Login Successful! (Connect backend later)')
+        try {
+            // ✅ CORRECT: Use POST method for login
+            const response = await axios.post('http://localhost:5000/api/auth/login', formData)
+            
+            console.log('Login Success:', response.data)
+
+            // Store token in localStorage
+            localStorage.setItem('token', response.data.token)
+            localStorage.setItem('user', JSON.stringify(response.data.user))
+
+            // Show success message
+            alert(`Welcome back, ${response.data.user.name}! 🎉`)
+
+            // Navigate to home
+            navigate('/dash-card')
+
+        } catch (err) {
+            console.error('Login Error:', err)
+            setError(err.response?.data?.message || 'Login failed. Please try again.')
+        } finally {
             setLoading(false)
-        }, 1500)
+        }
     }
 
     return (
-        <div className="auth-container">
+        <div className="auth-container">    
             <div className="auth-wrapper">
                 <div className="auth-left">
                     <div className="auth-info">
