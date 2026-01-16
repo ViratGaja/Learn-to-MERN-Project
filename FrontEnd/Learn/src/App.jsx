@@ -12,11 +12,13 @@ import Register from "./pages/Register";
 import DashCardPage from "./Components/Dashboard/DashCardPage";
 import DashCardDetailsPage from "./Components/Dashboard/DashCardDetailsPage";
 
+// ❌ Remove ProtectedRoute component - no need here
+
 function App() {
+  
   return (
     <Router>
       <Routes>
-
         {/* ===== PUBLIC PAGES ===== */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
@@ -26,12 +28,11 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Route>
 
-        {/* ===== DASHBOARD PAGES ===== */}
+        {/* ===== PROTECTED DASHBOARD PAGES ===== */}
         <Route element={<DashboardLayout />}>
           <Route path="/dash-card" element={<DashCardPage />} />
           <Route path="/dash-card-detail" element={<DashCardDetailsPage />} />
         </Route>
-
       </Routes>
     </Router>
   );
