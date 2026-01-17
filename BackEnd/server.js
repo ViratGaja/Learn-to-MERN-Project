@@ -4,8 +4,8 @@ const dotenv=require("dotenv")
 const mongoose=require("mongoose")
 dotenv.config()
 const authRoutes = require("./routes/auth");
-
-
+const cardRoutes = require("./routes/card");
+const cardDetailRoutes = require("./routes/cardDetail");
 const app=express()
 
 
@@ -22,9 +22,9 @@ app.get("/",(req,res)=>{
 })
 
 //Auth routes
-
-
 app.use("/api/auth", authRoutes);
+app.use("/api/card", cardRoutes);
+app.use("/api/card-detail", cardDetailRoutes)
 // Error Handle
 
 app.use((err,req,res,next)=>{

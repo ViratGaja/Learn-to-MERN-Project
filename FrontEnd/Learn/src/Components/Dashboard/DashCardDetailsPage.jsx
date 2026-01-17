@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import DashLayout from "./DashLayout";
 import "./dashboard.css";
 
@@ -8,12 +9,32 @@ const DashCardDetailsPage = () => {
   const [detail, setDetail] = useState("");
   const [rows, setRows] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setRows([...rows, { title, para, detail }]);
-    setTitle("");
-    setPara("");
-    setDetail("");
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        "http://localhost:5000/api/card-detail/add",
+        { title, para, detail },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data?.cardDetail) {
+        setRows([...rows, res.data.cardDetail]);
+      }
+
+      setTitle("");
+      setPara("");
+      setDetail("");
+    } catch (error) {
+      alert(error.response?.data?.message || "Error");
+    }
   };
 
   return (
@@ -21,9 +42,21 @@ const DashCardDetailsPage = () => {
       <h2>Card Details Page</h2>
 
       <form className="dashboard-form" onSubmit={handleSubmit}>
-        <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <input placeholder="Paragraph" value={para} onChange={(e) => setPara(e.target.value)} />
-        <input placeholder="Description" value={detail} onChange={(e) => setDetail(e.target.value)} />
+        <input
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          placeholder="Paragraph"
+          value={para}
+          onChange={(e) => setPara(e.target.value)}
+        />
+        <input
+          placeholder="Description"
+          value={detail}
+          onChange={(e) => setDetail(e.target.value)}
+        />
         <button>Add</button>
       </form>
 
