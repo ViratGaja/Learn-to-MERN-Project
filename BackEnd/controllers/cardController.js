@@ -14,12 +14,29 @@ exports.createCard = async (req, res) => {
     const card = await Card.create({
       title,
       para,
-      user: req.user.id, // login user
+      user: req.user.id,
     });
 
     res.status(201).json({
       success: true,
-      card, // ✅ VERY IMPORTANT
+      card,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ✅ NEW FUNCTION: Get all cards for logged-in user
+exports.getAllCards = async (req, res) => {
+  try {
+    const cards = await Card.find({ user: req.user.id }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      cards,
     });
   } catch (error) {
     res.status(500).json({

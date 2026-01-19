@@ -323,6 +323,86 @@
     transform: scale(1.05);
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
+/* ===== Card Detail Page ===== */
+
+.card-details-page {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.card-details-page h2 {
+  font-size: 32px;
+  color: #1f2937;
+  margin-bottom: 15px;
+  text-transform: capitalize;
+}
+
+.card-details-page strong {
+  display: block;
+  font-size: 18px;
+  color: #4f46e5;
+  margin-bottom: 20px;
+}
+
+.card-details-page p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #374151;
+}
+
+/* ===== Back Button ===== */
+.back-btn {
+  display: inline-block;
+  margin-bottom: 25px;
+  padding: 10px 18px;
+  background: #4f46e5;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: #4338ca;
+}
+
+/* ===== Loading / Error ===== */
+.status-text {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 20px;
+  color: #6b7280;
+}
+
+/* ===== Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .card-details-page {
+    margin: 30px 15px;
+    padding: 20px;
+  }
+
+  .card-details-page h2 {
+    font-size: 26px;
+  }
+}
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import DashLayout from "./DashLayout";
 import "./dashboard.css";
@@ -8,6 +8,32 @@ const DashCardDetailsPage = () => {
   const [para, setPara] = useState("");
   const [detail, setDetail] = useState("");
   const [rows, setRows] = useState([]);
+
+  // ✅ FETCH DATA FROM DB
+  useEffect(() => {
+    fetchCardDetails();
+  }, []);
+
+  const fetchCardDetails = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "http://localhost:5000/api/card-detail/all",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data?.cardDetails) {
+        setRows(res.data.cardDetails); // ⭐ DB DATA
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +52,7 @@ const DashCardDetailsPage = () => {
       );
 
       if (res.data?.cardDetail) {
-        setRows([...rows, res.data.cardDetail]);
+        setRows([res.data.cardDetail, ...rows]); // add instantly
       }
 
       setTitle("");
@@ -42,21 +68,9 @@ const DashCardDetailsPage = () => {
       <h2>Card Details Page</h2>
 
       <form className="dashboard-form" onSubmit={handleSubmit}>
-        <input
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          placeholder="Paragraph"
-          value={para}
-          onChange={(e) => setPara(e.target.value)}
-        />
-        <input
-          placeholder="Description"
-          value={detail}
-          onChange={(e) => setDetail(e.target.value)}
-        />
+        <input placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input placeholder="Paragraph" value={para} onChange={(e) => setPara(e.target.value)} />
+        <input placeholder="Description" value={detail} onChange={(e) => setDetail(e.target.value)} />
         <button>Add</button>
       </form>
 
@@ -69,13 +83,19 @@ const DashCardDetailsPage = () => {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, i) => (
-            <tr key={i}>
-              <td>{row.title}</td>
-              <td>{row.para}</td>
-              <td>{row.detail}</td>
+          {rows.length === 0 ? (
+            <tr>
+              <td colSpan="3">No data found</td>
             </tr>
-          ))}
+          ) : (
+            rows.map((row) => (
+              <tr key={row._id}>
+                <td>{row.title}</td>
+                <td>{row.para}</td>
+                <td>{row.detail}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </DashLayout>

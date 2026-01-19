@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import DashLayout from "./DashLayout";
 import "./dashboard.css";
@@ -7,12 +7,38 @@ const DashCardPage = () => {
   const [title, setTitle] = useState("");
   const [para, setPara] = useState("");
   const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Fetch cards on component mount
+  useEffect(() => {
+    fetchCards();
+  }, []);
+
+  const fetchCards = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get("http://localhost:5000/api/card/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.data?.cards) {
+        setRows(res.data.cards);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token"); // login token
+      const token = localStorage.getItem("token");
 
       const res = await axios.post(
         "http://localhost:5000/api/card/add",
@@ -25,12 +51,11 @@ const DashCardPage = () => {
       );
 
       if (res.data?.card) {
-        setRows([...rows, res.data.card]);
+        setRows([...rows, res.data.card]); // Add new card to table
       }
 
       setTitle("");
       setPara("");
-
     } catch (error) {
       alert(error.response?.data?.message || "Error");
     }
@@ -54,22 +79,32 @@ const DashCardPage = () => {
         <button>Add</button>
       </form>
 
-      <table className="dashboard-table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Paragraph</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i}>
-              <td>{row.title}</td>
-              <td>{row.para}</td>
+      {loading ? (
+        <p>Loading cards...</p>
+      ) : (
+        <table className="dashboard-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Paragraph</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan="2">No cards found</td>
+              </tr>
+            ) : (
+              rows.map((row) => (
+                <tr key={row._id}>
+                  <td>{row.title}</td>
+                  <td>{row.para}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      )}
     </DashLayout>
   );
 };
